@@ -3,52 +3,53 @@ import { defineConfig } from "vitepress"
 export default defineConfig({
   lang: "zh-CN",
   title: "Axiom",
-  description: "面向 AI 协作与后端工程的静态强类型语言项目。",
+  description: "面向 AI 协作与后端工程的静态强类型语言项目 · A statically typed language project for AI collaboration and backend engineering.",
   cleanUrls: true,
   lastUpdated: true,
   themeConfig: {
     nav: [
-      { text: "Overview", link: "/" },
-      { text: "Vision", link: "/vision" },
-      { text: "Architecture", link: "/architecture" },
-      { text: "Spec", link: "/spec/glossary" },
-      { text: "Process", link: "/process/" },
+      { text: "首页 / Home", link: "/" },
+      { text: "愿景 / Vision", link: "/vision" },
+      { text: "架构 / Architecture", link: "/architecture" },
+      { text: "规范 / Spec", link: "/spec/glossary" },
+      { text: "流程 / Process", link: "/process/" },
       { text: "RFC", link: "/rfc/0001-language-goals" },
-      { text: "Decisions", link: "/decisions/DEC-0001-no-macros" }
+      { text: "决策 / Decisions", link: "/decisions/DEC-0001-no-macros" },
+      { text: "GitHub", link: "https://github.com/tqtq-Wang/Aximo" }
     ],
     sidebar: [
       {
-        text: "Overview",
+        text: "概览 / Overview",
         items: [
-          { text: "Home", link: "/" },
-          { text: "Vision", link: "/vision" },
-          { text: "Architecture", link: "/architecture" }
+          { text: "首页 / Home", link: "/" },
+          { text: "愿景 / Vision", link: "/vision" },
+          { text: "架构 / Architecture", link: "/architecture" }
         ]
       },
       {
-        text: "Specification",
+        text: "规范 / Specification",
         items: [
-          { text: "Glossary", link: "/spec/glossary" },
-          { text: "Project Layout", link: "/spec/project-layout" },
-          { text: "Syntax", link: "/spec/syntax" },
-          { text: "Semantics", link: "/spec/semantics" },
-          { text: "Type System", link: "/spec/type-system" },
+          { text: "术语表 / Glossary", link: "/spec/glossary" },
+          { text: "项目结构 / Project Layout", link: "/spec/project-layout" },
+          { text: "语法 / Syntax", link: "/spec/syntax" },
+          { text: "语义 / Semantics", link: "/spec/semantics" },
+          { text: "类型系统 / Type System", link: "/spec/type-system" },
           { text: "Effects", link: "/spec/effects" },
-          { text: "Modules", link: "/spec/modules" },
-          { text: "Diagnostics", link: "/spec/diagnostics" },
-          { text: "Compiler Summary", link: "/spec/compiler-summary" }
+          { text: "模块 / Modules", link: "/spec/modules" },
+          { text: "诊断 / Diagnostics", link: "/spec/diagnostics" },
+          { text: "编译摘要 / Compiler Summary", link: "/spec/compiler-summary" }
         ]
       },
       {
-        text: "Process",
+        text: "流程 / Process",
         items: [
-          { text: "Overview", link: "/process/" },
-          { text: "Readiness", link: "/process/multi-agent-readiness" },
-          { text: "Workflow", link: "/process/multi-codex-workflow" },
-          { text: "Task Slices", link: "/process/task-slices" },
-          { text: "Branching and Commits", link: "/process/branching-and-commits" },
-          { text: "Development Environment", link: "/process/development-environment" },
-          { text: "Implementation Kickoff", link: "/process/implementation-kickoff" }
+          { text: "概览 / Overview", link: "/process/" },
+          { text: "准备度 / Readiness", link: "/process/multi-agent-readiness" },
+          { text: "协作流 / Workflow", link: "/process/multi-codex-workflow" },
+          { text: "任务切片 / Task Slices", link: "/process/task-slices" },
+          { text: "分支与提交 / Branching and Commits", link: "/process/branching-and-commits" },
+          { text: "开发环境 / Development Environment", link: "/process/development-environment" },
+          { text: "实现启动 / Implementation Kickoff", link: "/process/implementation-kickoff" }
         ]
       },
       {
@@ -64,25 +65,28 @@ export default defineConfig({
         ]
       },
       {
-        text: "Decisions",
+        text: "决策 / Decisions",
         items: [
-          { text: "No Macros", link: "/decisions/DEC-0001-no-macros" },
-          { text: "Default Immutable", link: "/decisions/DEC-0002-default-immutable" },
-          { text: "Explicit Effects", link: "/decisions/DEC-0003-explicit-effects" },
-          { text: "No Implicit Imports", link: "/decisions/DEC-0004-no-implicit-imports" }
+          { text: "无宏系统 / No Macros", link: "/decisions/DEC-0001-no-macros" },
+          { text: "默认不可变 / Default Immutable", link: "/decisions/DEC-0002-default-immutable" },
+          { text: "显式 Effects / Explicit Effects", link: "/decisions/DEC-0003-explicit-effects" },
+          { text: "无隐式导入 / No Implicit Imports", link: "/decisions/DEC-0004-no-implicit-imports" }
         ]
       }
+    ],
+    socialLinks: [
+      { icon: "github", link: "https://github.com/tqtq-Wang/Aximo" }
     ],
     search: {
       provider: "local"
     },
     outline: {
       level: [2, 3],
-      label: "On This Page"
+      label: "本页内容 / On This Page"
     },
     footer: {
-      message: "Axiom repository bootstrap.",
-      copyright: "Copyright 2026"
+      message: "Axiom 文档站 · GitHub: https://github.com/tqtq-Wang/Aximo",
+      copyright: "Copyright © 2026 Tyler Wang. All rights reserved."
     }
   }
 })
