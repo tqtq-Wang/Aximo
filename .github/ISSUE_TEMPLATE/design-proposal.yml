@@ -1,0 +1,35 @@
+name: Design Proposal
+description: 提出规范、流程或 schema 的变更建议
+title: "proposal: "
+labels:
+  - proposal
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 提案类型
+      options:
+        - spec
+        - process
+        - schema
+        - example
+        - ci
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题背景
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议方案
+    validations:
+      required: true
+  - type: textarea
+    id: sync
+    attributes:
+      label: 需要同步的文件
+      description: 列出 spec / schema / examples / tests 等受影响文件

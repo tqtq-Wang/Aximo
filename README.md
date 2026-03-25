@@ -78,11 +78,13 @@ pnpm docs:dev
 
 建议先读：
 
+- `AGENTS.md`
 - `CONTRIBUTING_AI.md`
 - `docs/process/index.md`
 - `docs/process/multi-agent-readiness.md`
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
+- `docs/process/branching-and-commits.md`
 
 ### 当前状态
 
@@ -191,11 +193,13 @@ This repository is being prepared explicitly for parallel Codex-based developmen
 
 Recommended reading order:
 
+- `AGENTS.md`
 - `CONTRIBUTING_AI.md`
 - `docs/process/index.md`
 - `docs/process/multi-agent-readiness.md`
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
+- `docs/process/branching-and-commits.md`
 
 ### Current Status
 

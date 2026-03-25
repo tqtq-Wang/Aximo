@@ -39,9 +39,11 @@ Avoid cross-cutting edits unless the task explicitly requires synchronized updat
 
 See also:
 
+- `AGENTS.md`
 - `docs/process/multi-agent-readiness.md`
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
+- `docs/process/branching-and-commits.md`
 
 ## Required Sync Matrix
 
@@ -98,3 +100,15 @@ When an AI updates this repository, it should leave behind:
 - Keep each branch aligned to one workstream whenever possible.
 - If a task changes `docs/spec/` and `schemas/`, treat that as a cross-contract change and call it out explicitly.
 - Do not merge parser or summary changes that contradict checked-in fixture expectations.
+
+## Commit Convention
+
+Use Alibaba-style Chinese commit subjects:
+
+- `feat: 中文描述`
+- `fix: 中文描述`
+- `docs: 中文描述`
+- `chore: 中文描述`
+- `refactor: 中文描述`
+- `test: 中文描述`
+- `ci: 中文描述`

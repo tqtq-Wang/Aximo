@@ -1,0 +1,29 @@
+name: Scaffolding Task
+description: 记录脚手架完善任务，不进入语言实现
+title: "chore: "
+labels:
+  - scaffolding
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: 任务目标
+    validations:
+      required: true
+  - type: dropdown
+    id: slice
+    attributes:
+      label: 建议切片
+      options:
+        - Slice A
+        - Slice B
+        - Slice C
+        - Slice G
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完成标准
+    validations:
+      required: true

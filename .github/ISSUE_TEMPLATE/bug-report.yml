@@ -1,0 +1,39 @@
+name: Bug Report
+description: 报告仓库脚手架、流程、CI 或夹具问题
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: 影响区域
+      options:
+        - docs
+        - process
+        - schemas
+        - examples
+        - tests
+        - ci
+        - tooling
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题描述
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现方式
+      description: 包含命令、路径或相关页面
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true

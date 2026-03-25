@@ -42,3 +42,4 @@ The repository is intentionally organized to support:
 5. [Effects](./spec/effects)
 6. [Compiler Summary](./spec/compiler-summary)
 7. [Process Overview](./process/)
+8. [Branching and Commits](./process/branching-and-commits)

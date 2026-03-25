@@ -5,6 +5,14 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
@@ -20,21 +28,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build docs
-        run: pnpm docs:build
-
-      - name: Validate spec
-        run: bash tools/scripts/validate-spec.sh
-
-      - name: Validate examples
-        run: bash tools/scripts/validate-examples.sh
-
-      - name: Generate snapshot inventory
-        run: bash tools/scripts/generate-snapshots.sh
+      - name: Run repository checks
+        run: pnpm repo:check
 
       - name: Check generated files are committed
         run: git diff --exit-code -- tests/snapshots/index.json

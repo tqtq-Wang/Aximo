@@ -7,7 +7,11 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "repo:validate-spec": "python tools/check_spec.py",
+    "repo:validate-examples": "python tools/check_examples.py",
+    "repo:generate-snapshots": "python tools/generate_snapshot_index.py",
+    "repo:check": "python tools/check_spec.py && python tools/check_examples.py && python tools/generate_snapshot_index.py && vitepress build docs"
   },
   "devDependencies": {
     "vitepress": "^1"

@@ -14,3 +14,4 @@ Read in this order:
 1. [Multi-Agent Readiness](./multi-agent-readiness)
 2. [Multi-Codex Workflow](./multi-codex-workflow)
 3. [Task Slices](./task-slices)
+4. [Branching and Commits](./branching-and-commits)
