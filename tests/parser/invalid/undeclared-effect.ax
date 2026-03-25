@@ -1,0 +1,6 @@
+module app
+
+pub fn save_user(user: User) -> Result<Unit, SaveUserError> {
+    repo.insert(user)?
+    Ok(())
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "module": "app",
+  "imports": [],
+  "exports": [
+    {
+      "name": "prepare_message",
+      "kind": "function",
+      "visibility": "public",
+      "signature": "(String) -> Result<OutboundMessage, SendMessageError>",
+      "effects": [],
+      "errors": [
+        "SendMessageError::EmptyMessage"
+      ],
+      "async": false,
+      "calls": []
+    },
+    {
+      "name": "send_message",
+      "kind": "function",
+      "visibility": "public",
+      "signature": "(String) -> Result<Unit, SendMessageError>",
+      "effects": [
+        "net.call",
+        "log.write"
+      ],
+      "errors": [
+        "SendMessageError::EmptyMessage",
+        "SendMessageError::DeliveryFailed"
+      ],
+      "async": true,
+      "calls": [
+        "app.prepare_message",
+        "app.transmit",
+        "app.record_delivery"
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "OutboundMessage",
+      "kind": "struct",
+      "fields": [
+        {
+          "name": "value",
+          "type": "String",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "name": "SendMessageError",
+      "kind": "enum",
+      "variants": [
+        {
+          "name": "EmptyMessage"
+        },
+        {
+          "name": "DeliveryFailed"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [],
+  "breaking_changes": []
+}

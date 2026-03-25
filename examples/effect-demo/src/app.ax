@@ -1,0 +1,39 @@
+module app
+
+pub struct OutboundMessage {
+    pub value: String
+}
+
+pub enum SendMessageError {
+    EmptyMessage
+    DeliveryFailed
+}
+
+pub fn prepare_message(input: String) -> Result<OutboundMessage, SendMessageError> {
+    if input.trim() == "" {
+        Err(SendMessageError::EmptyMessage)
+    } else {
+        Ok(OutboundMessage { value: input })
+    }
+}
+
+pub async fn send_message(input: String) -> Result<Unit, SendMessageError>
+    effects [net.call, log.write]
+{
+    let message = prepare_message(input)?
+    await transmit(message)?
+    record_delivery(message)?
+    Ok(())
+}
+
+internal async fn transmit(message: OutboundMessage) -> Result<Unit, SendMessageError>
+    effects [net.call]
+{
+    Ok(())
+}
+
+internal fn record_delivery(message: OutboundMessage) -> Result<Unit, SendMessageError>
+    effects [log.write]
+{
+    Ok(())
+}

@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build docs
+        run: pnpm docs:build
+
+      - name: Validate spec
+        run: bash tools/scripts/validate-spec.sh
+
+      - name: Validate examples
+        run: bash tools/scripts/validate-examples.sh
+
+      - name: Generate snapshot inventory
+        run: bash tools/scripts/generate-snapshots.sh
+
+      - name: Check generated files are committed
+        run: git diff --exit-code -- tests/snapshots/index.json

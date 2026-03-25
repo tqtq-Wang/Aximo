@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "diagnostics": [
+    {
+      "level": "error",
+      "code": "P001",
+      "message": "missing module declaration at start of file",
+      "location": {
+        "file": "tests/parser/invalid/missing-module.ax",
+        "start": {
+          "line": 1,
+          "column": 1
+        },
+        "end": {
+          "line": 1,
+          "column": 3
+        }
+      },
+      "help": "add a `module ...` declaration before any imports or declarations"
+    }
+  ]
+}

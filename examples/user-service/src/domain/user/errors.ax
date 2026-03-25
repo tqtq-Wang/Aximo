@@ -1,0 +1,8 @@
+module domain.user.errors
+
+pub enum CreateUserError {
+    InvalidName
+    InvalidEmail
+    AlreadyExists
+    StorageUnavailable
+}

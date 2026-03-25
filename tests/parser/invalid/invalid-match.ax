@@ -1,0 +1,8 @@
+module app
+
+fn map_repo_error(err: RepoError) -> CreateUserError {
+    match err {
+        RepoError::Conflict CreateUserError::AlreadyExists,
+        RepoError::Unknown => CreateUserError::StorageUnavailable
+    }
+}

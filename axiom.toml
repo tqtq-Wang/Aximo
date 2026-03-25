@@ -1,0 +1,25 @@
+[workspace]
+name = "axiom"
+version = "0.1.0"
+edition = "2026"
+members = [
+  "examples/hello-world",
+  "examples/user-service",
+  "examples/effect-demo"
+]
+
+[docs]
+site_dir = "docs"
+entry = "docs/index.md"
+
+[schemas]
+ast = "schemas/ast.schema.json"
+diagnostics = "schemas/diagnostics.schema.json"
+compiler_summary = "schemas/compiler-summary.schema.json"
+
+[conventions]
+module_path_matches_file_path = true
+implicit_imports = false
+default_mutability = "immutable"
+effects_must_be_explicit = true
+compiler_summary_required = true

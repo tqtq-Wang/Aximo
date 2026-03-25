@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "module": "app",
+  "imports": [],
+  "exports": [
+    {
+      "name": "build_greeting",
+      "kind": "function",
+      "visibility": "public",
+      "signature": "(String) -> String",
+      "effects": [],
+      "errors": [],
+      "async": false,
+      "calls": []
+    }
+  ],
+  "types": [],
+  "diagnostics": [],
+  "breaking_changes": []
+}

@@ -1,0 +1,5 @@
+module app
+
+pub fn build_greeting(subject: String) -> String {
+    "Hello, " + subject
+}

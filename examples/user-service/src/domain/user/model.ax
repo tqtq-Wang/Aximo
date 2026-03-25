@@ -1,0 +1,15 @@
+module domain.user.model
+
+pub newtype UserId = String
+pub newtype Email = String
+
+pub struct User {
+    pub id: UserId
+    pub name: String
+    pub email: Email
+}
+
+pub struct CreateUserInput {
+    pub name: String
+    pub email: String
+}

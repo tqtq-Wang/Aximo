@@ -1,0 +1,19 @@
+module domain.user.service
+
+use domain.user.model.{User, UserId, Email, CreateUserInput}
+use domain.user.errors.CreateUserError
+use domain.user.repo.{UserRepo, RepoError}
+
+pub fn create_user<R: UserRepo>(
+    repo: R,
+    input: CreateUserInput
+) -> Result<User, CreateUserError>
+    effects [db.read, db.write]
+{
+    let email = parse_email(input.email)?
+    Ok(User {
+        id: UserId("generated-id"),
+        name: input.name,
+        email: email
+    })
+}

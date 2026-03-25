@@ -1,0 +1,17 @@
+module domain.user.repo
+
+use domain.user.model.{User, Email}
+
+pub enum RepoError {
+    ConnectionFailed
+    Conflict
+    Unknown
+}
+
+pub trait UserRepo {
+    fn exists_by_email(email: Email) -> Result<Bool, RepoError>
+        effects [db.read]
+
+    fn insert(user: User) -> Result<Unit, RepoError>
+        effects [db.write]
+}

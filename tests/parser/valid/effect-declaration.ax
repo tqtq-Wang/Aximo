@@ -1,0 +1,7 @@
+module app
+
+pub fn save() -> Result<Unit, SaveError>
+    effects [db.write, log.write]
+{
+    Ok(())
+}

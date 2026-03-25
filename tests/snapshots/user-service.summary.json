@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1.0",
+  "module": "domain.user.service",
+  "imports": [
+    "domain.user.model.{User,UserId,Email,CreateUserInput}",
+    "domain.user.errors.CreateUserError",
+    "domain.user.repo.{UserRepo,RepoError}"
+  ],
+  "exports": [
+    {
+      "name": "create_user",
+      "kind": "function",
+      "visibility": "public",
+      "signature": "(CreateUserInput) -> Result<User, CreateUserError>",
+      "effects": [
+        "db.read",
+        "db.write"
+      ],
+      "errors": [
+        "CreateUserError::InvalidName",
+        "CreateUserError::InvalidEmail",
+        "CreateUserError::AlreadyExists",
+        "CreateUserError::StorageUnavailable"
+      ],
+      "async": false,
+      "calls": [
+        "domain.user.service.parse_email",
+        "domain.user.repo.UserRepo.exists_by_email",
+        "domain.user.repo.UserRepo.insert"
+      ]
+    }
+  ],
+  "types": [],
+  "diagnostics": [],
+  "breaking_changes": []
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_from": "tests/snapshots/*.summary.json",
+  "snapshots": [
+    {
+      "file": "effect-demo.summary.json",
+      "module": "app",
+      "export_count": 2,
+      "type_count": 2
+    },
+    {
+      "file": "hello-world.summary.json",
+      "module": "app",
+      "export_count": 1,
+      "type_count": 0
+    },
+    {
+      "file": "user-service.summary.json",
+      "module": "domain.user.service",
+      "export_count": 1,
+      "type_count": 0
+    }
+  ]
+}

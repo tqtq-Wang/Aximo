@@ -1,0 +1,15 @@
+module app
+
+use domain.user.model.{User, CreateUserInput}
+use domain.user.errors.CreateUserError
+use domain.user.repo.UserRepo
+use domain.user.service.create_user
+
+pub fn bootstrap<R: UserRepo>(
+    repo: R,
+    input: CreateUserInput
+) -> Result<User, CreateUserError>
+    effects [db.read, db.write]
+{
+    create_user(repo, input)
+}

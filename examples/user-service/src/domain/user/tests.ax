@@ -1,0 +1,37 @@
+module domain.user.tests
+
+use domain.user.service.create_user
+use domain.user.model.{User, Email, CreateUserInput}
+use domain.user.errors.CreateUserError
+use domain.user.repo.{UserRepo, RepoError}
+
+struct FakeUserRepo {
+    should_exist: Bool
+}
+
+impl UserRepo for FakeUserRepo {
+    fn exists_by_email(email: Email) -> Result<Bool, RepoError>
+        effects [db.read]
+    {
+        Ok(false)
+    }
+
+    fn insert(user: User) -> Result<Unit, RepoError>
+        effects [db.write]
+    {
+        Ok(())
+    }
+}
+
+test "invalid email returns InvalidEmail" {
+    let repo = FakeUserRepo {
+        should_exist: false
+    }
+
+    let result = create_user(repo, CreateUserInput {
+        name: "Alice",
+        email: "bad-email"
+    })
+
+    assert_eq(result, Err(CreateUserError::InvalidEmail))
+}

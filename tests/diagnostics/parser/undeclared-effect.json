@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "diagnostics": [
+    {
+      "level": "error",
+      "code": "E001",
+      "message": "effectful operation requires an explicit effects clause",
+      "location": {
+        "file": "tests/parser/invalid/undeclared-effect.ax",
+        "start": {
+          "line": 4,
+          "column": 5
+        },
+        "end": {
+          "line": 4,
+          "column": 21
+        }
+      },
+      "help": "declare the required effect set, for example `effects [db.write]`"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "diagnostics": [
+    {
+      "level": "error",
+      "code": "P002",
+      "message": "invalid match arm syntax; expected `=>`",
+      "location": {
+        "file": "tests/parser/invalid/invalid-match.ax",
+        "start": {
+          "line": 5,
+          "column": 29
+        },
+        "end": {
+          "line": 5,
+          "column": 30
+        }
+      },
+      "help": "write each arm as `pattern => expr`"
+    }
+  ]
+}
