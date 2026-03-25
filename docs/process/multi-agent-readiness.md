@@ -73,12 +73,13 @@ To move into formal multi-Codex development, the following must be true:
 
 ## Current Position
 
-The repository is targeting Level 1 after this setup pass:
+The repository is now at Level 1:
 
 - structure exists
 - process docs exist
 - validation scripts exist
 - CI exists
+- implementation kickoff rules exist
 
 The next gate is Level 2, which requires a functioning parser-to-AST pipeline.
 

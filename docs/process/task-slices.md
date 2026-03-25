@@ -82,7 +82,7 @@ Responsibilities:
 
 Validation target:
 
-- parser fixture execution once implemented
+- parser fixture execution once implementation starts
 
 ### Slice E: Diagnostics
 
@@ -98,7 +98,7 @@ Responsibilities:
 
 Validation target:
 
-- diagnostics fixture comparison once implemented
+- diagnostics fixture comparison once implementation starts
 
 ### Slice F: Compiler Summary
 
@@ -115,7 +115,7 @@ Responsibilities:
 
 Validation target:
 
-- summary snapshot comparison once implemented
+- summary snapshot comparison once implementation starts
 
 ### Slice G: Tooling and CI
 

@@ -44,6 +44,8 @@ See also:
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
 - `docs/process/branching-and-commits.md`
+- `docs/process/development-environment.md`
+- `docs/process/implementation-kickoff.md`
 
 ## Required Sync Matrix
 

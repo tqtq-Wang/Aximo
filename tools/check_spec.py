@@ -17,6 +17,7 @@ def main() -> int:
         ".github/CODEOWNERS",
         ".github/PULL_REQUEST_TEMPLATE.md",
         ".github/workflows/ci.yml",
+        "compiler/README.md",
         "docs/index.md",
         "docs/vision.md",
         "docs/architecture.md",
@@ -34,6 +35,11 @@ def main() -> int:
         "docs/process/multi-codex-workflow.md",
         "docs/process/task-slices.md",
         "docs/process/branching-and-commits.md",
+        "docs/process/development-environment.md",
+        "docs/process/implementation-kickoff.md",
+        "tools/scripts/bootstrap.ps1",
+        "tools/scripts/repo-check.ps1",
+        "tools/scripts/bootstrap.sh",
         "schemas/ast.schema.json",
         "schemas/diagnostics.schema.json",
         "schemas/compiler-summary.schema.json",
@@ -69,6 +75,8 @@ def main() -> int:
         "/process/multi-codex-workflow",
         "/process/task-slices",
         "/process/branching-and-commits",
+        "/process/development-environment",
+        "/process/implementation-kickoff",
     ]
     missing_links = [link for link in required_links if link not in config_text]
     if missing_links:

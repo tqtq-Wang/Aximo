@@ -6,19 +6,19 @@ This file defines repository-local instructions for AI agents working in `Aximo`
 
 ## Current Phase
 
-The repository is still in scaffolding and governance completion mode.
+The repository is implementation-ready, but implementation should begin only when the task explicitly requests language development.
 
 Do:
 
-- improve repository structure
-- improve process documents
+- maintain repository structure and governance
 - improve CI and validation tooling
 - improve examples, fixtures, and collaboration rules
+- start bounded implementation work only when explicitly requested
 
 Do not:
 
-- start implementing lexer, parser, type checker, effect checker, or runtime code
 - invent new language features beyond the documented spec
+- bypass slice boundaries when implementation begins
 
 ## Source of Truth
 
@@ -50,6 +50,7 @@ Keep the message direct and outcome-oriented.
 - one agent, one bounded slice
 - avoid broad cross-slice edits unless explicitly required
 - if you touch spec and schema together, call that out clearly
+- for first implementation work, stay within Slice D, E, or F unless explicitly reassigned
 
 ## Validation Before Completion
 
@@ -59,8 +60,10 @@ Run what is relevant:
 - `python tools/check_examples.py`
 - `python tools/generate_snapshot_index.py`
 - `corepack pnpm docs:build`
+- `corepack pnpm repo:check`
 
 ## Windows Notes
 
 - prefer repository scripts and Python entrypoints for validation
 - shell wrappers in `tools/scripts/` exist mainly for CI and Unix-style invocation
+- PowerShell wrappers are available for Windows-first local usage

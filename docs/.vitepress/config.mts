@@ -46,7 +46,9 @@ export default defineConfig({
           { text: "Readiness", link: "/process/multi-agent-readiness" },
           { text: "Workflow", link: "/process/multi-codex-workflow" },
           { text: "Task Slices", link: "/process/task-slices" },
-          { text: "Branching and Commits", link: "/process/branching-and-commits" }
+          { text: "Branching and Commits", link: "/process/branching-and-commits" },
+          { text: "Development Environment", link: "/process/development-environment" },
+          { text: "Implementation Kickoff", link: "/process/implementation-kickoff" }
         ]
       },
       {

@@ -15,3 +15,5 @@ Read in this order:
 2. [Multi-Codex Workflow](./multi-codex-workflow)
 3. [Task Slices](./task-slices)
 4. [Branching and Commits](./branching-and-commits)
+5. [Development Environment](./development-environment)
+6. [Implementation Kickoff](./implementation-kickoff)

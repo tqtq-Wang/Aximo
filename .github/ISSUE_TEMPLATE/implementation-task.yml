@@ -1,0 +1,36 @@
+name: Implementation Task
+description: 记录语言实现切片任务
+title: "feat: "
+labels:
+  - implementation
+body:
+  - type: dropdown
+    id: slice
+    attributes:
+      label: 实现切片
+      options:
+        - Slice D: Parser and AST
+        - Slice E: Diagnostics
+        - Slice F: Compiler Summary
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 写入范围
+      description: 列出允许修改的目录或文件
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: 目标
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: 验证方式
+      description: 列出必须通过的 fixture、脚本或 CI
+    validations:
+      required: true

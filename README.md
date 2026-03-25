@@ -85,6 +85,8 @@ pnpm docs:dev
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
 - `docs/process/branching-and-commits.md`
+- `docs/process/development-environment.md`
+- `docs/process/implementation-kickoff.md`
 
 ### 当前状态
 
@@ -108,6 +110,8 @@ pnpm docs:dev
 - type checker
 - effect checker
 - runtime 或标准库实现
+
+当前仓库已经基本完成实现前脚手架，后续可以在明确任务下正式进入 parser / diagnostics / summary 的实现切片。
 
 ### 核心原则
 
@@ -200,6 +204,8 @@ Recommended reading order:
 - `docs/process/multi-codex-workflow.md`
 - `docs/process/task-slices.md`
 - `docs/process/branching-and-commits.md`
+- `docs/process/development-environment.md`
+- `docs/process/implementation-kickoff.md`
 
 ### Current Status
 
@@ -223,6 +229,8 @@ Explicitly not included today:
 - type checker
 - effect checker
 - runtime or standard library implementation
+
+The repository scaffolding is now close to implementation-ready. The next approved step is to begin bounded compiler slices such as parser/AST, diagnostics, and summary work under the documented process rules.
 
 ### Principles
 
