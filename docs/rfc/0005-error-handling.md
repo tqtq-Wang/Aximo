@@ -14,6 +14,7 @@ Adopt structured error handling through `Result<T, E>` rather than exception-dri
 - error types should be enumerable and documented
 - propagation remains explicit
 - crashes are reserved for unrecoverable system conditions
+- normal business error flow should lower to explicit control flow rather than hidden exception machinery
 
 ## Why
 

@@ -18,3 +18,4 @@ Read in this order:
 5. [Branching and Commits](./branching-and-commits)
 6. [Development Environment](./development-environment)
 7. [Implementation Kickoff](./implementation-kickoff)
+8. [IR Implementation Kickoff](./ir-implementation-kickoff)

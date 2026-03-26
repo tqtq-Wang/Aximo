@@ -4,6 +4,8 @@
 
 This document records the baseline semantic model needed for parser, analysis, and tooling work.
 
+This baseline now assumes that future semantic refinement should preserve a predictable cost model. See RFC 0008, RFC 0009, and RFC 0010 for planned clarifications.
+
 ## Local Reasoning
 
 Axiom prioritizes local reasoning. A reader should be able to understand the main behavior of a function from:
@@ -71,6 +73,8 @@ The `?` operator is treated as explicit error propagation because it operates on
 
 `Option` and `Result` are language-level concepts rather than ordinary library aliases. Tooling should understand them when building diagnostics, summaries, and control-flow analysis.
 
+Normal `Result` propagation is expected to lower to explicit control flow rather than exception-driven business flow.
+
 ## Effects
 
 Effects are part of function semantics, not merely annotations.
@@ -103,8 +107,11 @@ This repository assumes:
 - import order must not influence type choice
 - implementation selection should avoid hidden magic
 
+The intended direction is static dispatch by default, with any future dynamic dispatch boundary kept explicit in type form and source.
+
 ## Assumptions and Open Questions
 
 - Exact primitive scalar set is not frozen in this bootstrap.
-- Ownership, borrowing, and lifetime semantics are intentionally unspecified here.
+- Ownership, borrowing, and lifetime semantics are intentionally incomplete here and should be refined through RFC 0009 rather than ad hoc implementation drift.
+- Dispatch and runtime boundary rules should be refined through RFC 0010 before backend integration becomes normative.
 - The exact boundary of `internal` visibility is deferred to compiler and package model work.

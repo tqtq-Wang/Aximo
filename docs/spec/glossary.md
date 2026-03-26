@@ -75,6 +75,14 @@ The property that a human or AI can understand a code fragment mainly from the c
 
 An explicit design stance against hidden control flow and hidden semantics such as strong macro systems, implicit imports, or implicit conversions.
 
+### Cost Model
+
+The documented explanation of which language operations are expected to be cheap, which may allocate or dispatch dynamically, and which boundaries should remain explicit to users and tooling.
+
+### Runtime Boundary
+
+The point where language semantics rely on executor, scheduler, allocator, panic, or other runtime services rather than plain lowered control flow.
+
 ### Fixture
 
 A repository artifact used as an input or expected output for compiler and tooling validation.

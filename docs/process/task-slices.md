@@ -136,9 +136,67 @@ Validation target:
 - GitHub Actions
 - local script execution
 
+## Recommended Next Slices After Frontend Bootstrap
+
+Once parser, diagnostics, and summary are integrated on `main`, the next bounded implementation phase should move to IR and backend boundary work.
+
+### Slice H: IR Core
+
+Write scope:
+
+- `compiler/ir/__init__.py`
+- `compiler/ir/types.py`
+- `compiler/ir/README.md`
+
+Responsibilities:
+
+- define the IR data model
+- expose a stable in-repo IR API
+- keep IR independent from backend-specific details
+
+Validation target:
+
+- deterministic IR construction and serialization checks
+
+### Slice I: IR Lowering
+
+Write scope:
+
+- `compiler/ir/lowering.py`
+- `compiler/ir/cli.py`
+- `compiler/ir/__main__.py`
+
+Responsibilities:
+
+- lower public parser results into IR
+- normalize source-shaped constructs into backend-ready control flow
+- preserve phase boundaries from RFC 0011
+
+Validation target:
+
+- example-backed lowering through the public parser API
+
+### Slice J: Backend Integration
+
+Write scope:
+
+- `compiler/backend/*`
+
+Responsibilities:
+
+- keep backend work consuming IR rather than parser or AST
+- preserve spike isolation until formal IR consumption exists
+- validate backend-facing contracts against current RFC boundaries
+
+Validation target:
+
+- backend adapter checks against IR inputs
+
 ## Assignment Guidance
 
 - give one worker one slice
 - use the integrator for cross-slice tasks
 - keep Slice A and Slice B tightly coordinated
 - avoid assigning Slice C to the same worker as Slice D when parser behavior is still unstable
+- avoid assigning Slice H and Slice I to the same worker if the IR contract is still moving
+- never let Slice J define IR semantics by convenience

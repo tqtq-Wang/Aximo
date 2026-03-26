@@ -70,3 +70,4 @@ Copyright:
 8. [分支与提交 / Branching and Commits](./process/branching-and-commits)
 9. [开发环境 / Development Environment](./process/development-environment)
 10. [实现启动 / Implementation Kickoff](./process/implementation-kickoff)
+11. [IR 实现启动 / IR Implementation Kickoff](./process/ir-implementation-kickoff)

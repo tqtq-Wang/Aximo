@@ -21,7 +21,8 @@ Define a conservative type-system baseline centered on structs, enums, newtypes,
 - advanced inference tricks
 - higher-kinded types
 - dependent types
-- ownership and lifetime semantics
+- detailed ownership and lifetime semantics, to be refined in RFC 0009
+- final dispatch strategy details, to be refined in RFC 0010
 
 ## Why
 

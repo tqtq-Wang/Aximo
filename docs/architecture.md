@@ -61,6 +61,11 @@ The `compiler/` directory is the implementation surface for future work. At boot
 - `ast/`
 - `diagnostics/`
 - `summary/`
+- `backend/`
+
+The next implementation phase is expected to add:
+
+- `ir/`
 
 ## Dependency Direction
 
@@ -103,6 +108,10 @@ The repository currently assumes three structured outputs from the future front-
 1. AST output for parsed modules
 2. diagnostics output for errors and warnings
 3. compiler summary output for semantic and public API analysis
+
+The repository also now assumes one internal implementation handoff:
+
+4. IR as the formal frontend-to-backend contract once implementation sprint 2 begins
 
 These outputs are designed to support:
 

@@ -66,3 +66,17 @@ Goal:
 - invalid parser fixtures produce structured diagnostics
 - AST output can be validated against `schemas/ast.schema.json`
 - no uncontrolled spec drift was introduced
+
+## Status Update
+
+The repository now has integrated parser, diagnostics, and summary implementations on `main`, plus an isolated LLVM feasibility spike.
+
+That means implementation sprint 1 is no longer the main coordination problem.
+
+The next coordination problem is sprint 2:
+
+- formal IR introduction
+- lowering boundaries
+- backend adaptation through IR rather than parser or AST
+
+Use [IR Implementation Kickoff](./ir-implementation-kickoff) together with RFC 0008 through RFC 0011 before assigning new backend-facing work.

@@ -452,3 +452,45 @@ The simplest safe model is:
 - one validation loop before merge
 
 If you keep those four invariants, multi-agent CLI development remains manageable.
+
+## Second Sprint Recommendation
+
+After the frontend bootstrap lands on `main`, switch to an IR-first operating model rather than extending the original parser slices indefinitely.
+
+### Sprint Goal
+
+- introduce a formal IR boundary
+- lower current frontend outputs into IR
+- keep backend work behind the IR contract
+
+### Active Slices
+
+- Slice H
+- Slice I
+- Slice J
+
+### Mandatory Prompt Additions
+
+Every worker prompt in this phase should say:
+
+- IR is the backend contract
+- AST is not the backend contract
+- the LLVM spike is not normative
+- parser public APIs may be consumed, parser internals may not
+
+### Suggested Scope
+
+Slice H:
+
+- define IR node/data model
+- document public IR API
+
+Slice I:
+
+- implement lowering from `parse_file_result`
+- keep lowering deterministic on current examples
+
+Slice J:
+
+- adapt backend code to consume IR inputs only
+- do not expand LLVM work beyond the IR boundary

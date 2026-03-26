@@ -10,6 +10,7 @@ This document defines the initial type-system surface needed by the repository b
 - strong
 - explicit
 - oriented toward readable domain modeling rather than advanced type-level tricks
+- intended to preserve a predictable cost model as backend work matures
 
 ## Type Forms in Scope
 
@@ -42,6 +43,7 @@ Current bootstrap assumption:
 
 - generic constraints use a direct `T: Trait` style
 - advanced higher-kinded or dependent type features are out of scope
+- future implementation should prefer static dispatch by default; see RFC 0010
 
 ### Trait-Based Abstraction
 
@@ -56,6 +58,8 @@ Represents an explicit optional value.
 ### `Result<T, E>`
 
 Represents a success-or-error value where `E` is a structured error type.
+
+The intended runtime direction is explicit control-flow lowering rather than exception-style business logic.
 
 ## Canonical Domain Modeling Guidance
 
@@ -76,8 +80,8 @@ This bootstrap does not finalize:
 
 - full primitive type catalog
 - numeric coercion rules
-- trait object or dynamic dispatch semantics
-- ownership or memory semantics
+- trait object or dynamic dispatch semantics, pending RFC 0010
+- ownership or memory semantics, pending RFC 0009
 - advanced inference rules
 
 ## Implications for Tooling

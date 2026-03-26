@@ -50,7 +50,8 @@ export default defineConfig({
           { text: "任务切片 / Task Slices", link: "/process/task-slices" },
           { text: "分支与提交 / Branching and Commits", link: "/process/branching-and-commits" },
           { text: "开发环境 / Development Environment", link: "/process/development-environment" },
-          { text: "实现启动 / Implementation Kickoff", link: "/process/implementation-kickoff" }
+          { text: "实现启动 / Implementation Kickoff", link: "/process/implementation-kickoff" },
+          { text: "IR 实现启动 / IR Kickoff", link: "/process/ir-implementation-kickoff" }
         ]
       },
       {
@@ -62,7 +63,11 @@ export default defineConfig({
           { text: "0004 Effects", link: "/rfc/0004-effects" },
           { text: "0005 Error Handling", link: "/rfc/0005-error-handling" },
           { text: "0006 Async", link: "/rfc/0006-async" },
-          { text: "0007 Compiler Summary", link: "/rfc/0007-compiler-summary" }
+          { text: "0007 Compiler Summary", link: "/rfc/0007-compiler-summary" },
+          { text: "0008 Performance Cost Model", link: "/rfc/0008-performance-cost-model" },
+          { text: "0009 Memory and Value Semantics", link: "/rfc/0009-memory-and-value-semantics" },
+          { text: "0010 Dispatch and Runtime Boundaries", link: "/rfc/0010-dispatch-and-runtime-boundaries" },
+          { text: "0011 IR Design and Lowering Boundary", link: "/rfc/0011-ir-design-and-lowering-boundary" }
         ]
       },
       {

@@ -14,6 +14,7 @@ Define Axiom as a statically typed compiled language optimized for AI collaborat
 - make errors and effects visible in signatures
 - support machine-readable semantic outputs
 - keep the language readable and low-magic
+- keep runtime costs explainable and hard to hide
 - enable gradual use in real backend service development
 
 ## Non-Goals
@@ -32,3 +33,4 @@ AI systems work better when source layout, call contracts, and error boundaries 
 - repository structure becomes part of the product
 - compiler summary becomes a first-class output
 - examples and schemas are not secondary artifacts
+- performance work should start from a documented cost model rather than ad hoc optimization folklore
