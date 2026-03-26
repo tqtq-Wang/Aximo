@@ -13,7 +13,8 @@ Read in this order:
 
 1. [Multi-Agent Readiness](./multi-agent-readiness)
 2. [Multi-Codex Workflow](./multi-codex-workflow)
-3. [Task Slices](./task-slices)
-4. [Branching and Commits](./branching-and-commits)
-5. [Development Environment](./development-environment)
-6. [Implementation Kickoff](./implementation-kickoff)
+3. [Multi-Agent CLI Playbook](./multi-agent-cli-playbook)
+4. [Task Slices](./task-slices)
+5. [Branching and Commits](./branching-and-commits)
+6. [Development Environment](./development-environment)
+7. [Implementation Kickoff](./implementation-kickoff)

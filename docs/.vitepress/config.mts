@@ -46,6 +46,7 @@ export default defineConfig({
           { text: "概览 / Overview", link: "/process/" },
           { text: "准备度 / Readiness", link: "/process/multi-agent-readiness" },
           { text: "协作流 / Workflow", link: "/process/multi-codex-workflow" },
+          { text: "CLI 操作手册 / CLI Playbook", link: "/process/multi-agent-cli-playbook" },
           { text: "任务切片 / Task Slices", link: "/process/task-slices" },
           { text: "分支与提交 / Branching and Commits", link: "/process/branching-and-commits" },
           { text: "开发环境 / Development Environment", link: "/process/development-environment" },
