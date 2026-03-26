@@ -10,6 +10,11 @@ from .models import (
     Span,
 )
 from . import parser
+from .parser import (
+    diagnostic_from_parser_error,
+    parse_file_report,
+    report_from_parser_error,
+)
 
 __all__ = [
     "DEFAULT_SCHEMA_VERSION",
@@ -19,5 +24,8 @@ __all__ = [
     "Position",
     "RelatedLocation",
     "Span",
+    "diagnostic_from_parser_error",
+    "parse_file_report",
     "parser",
+    "report_from_parser_error",
 ]
