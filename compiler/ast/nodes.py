@@ -8,6 +8,21 @@ def _with_optional(base: dict, **optional: object) -> dict:
     return base
 
 
+def position(line: int, column: int) -> dict:
+    return {
+        "line": line,
+        "column": column,
+    }
+
+
+def span(file: str, start: dict, end: dict) -> dict:
+    return {
+        "file": file,
+        "start": start,
+        "end": end,
+    }
+
+
 def program(module: dict, uses: list[dict], declarations: list[dict]) -> dict:
     return {
         "kind": "Program",
@@ -17,20 +32,24 @@ def program(module: dict, uses: list[dict], declarations: list[dict]) -> dict:
     }
 
 
-def module_decl(path: str) -> dict:
-    return {
-        "kind": "ModuleDecl",
-        "path": path,
-    }
+def module_decl(path: str, span: dict | None = None) -> dict:
+    return _with_optional(
+        {
+            "kind": "ModuleDecl",
+            "path": path,
+        },
+        span=span,
+    )
 
 
-def use_decl(path: str, imports: list[str] | None = None) -> dict:
+def use_decl(path: str, imports: list[str] | None = None, span: dict | None = None) -> dict:
     return _with_optional(
         {
             "kind": "UseDecl",
             "path": path,
         },
         imports=imports or None,
+        span=span,
     )
 
 
@@ -70,54 +89,89 @@ def unit_type() -> dict:
     }
 
 
-def field_decl(name: str, type_expr: dict, visibility: str = "private") -> dict:
-    return {
-        "visibility": visibility,
-        "name": name,
-        "type": type_expr,
-    }
+def field_decl(
+    name: str,
+    type_expr: dict,
+    visibility: str = "private",
+    span: dict | None = None,
+) -> dict:
+    return _with_optional(
+        {
+            "visibility": visibility,
+            "name": name,
+            "type": type_expr,
+        },
+        span=span,
+    )
 
 
-def variant_decl(name: str, fields: list[dict] | None = None) -> dict:
-    return _with_optional({"name": name}, fields=fields or None)
+def variant_decl(name: str, fields: list[dict] | None = None, span: dict | None = None) -> dict:
+    return _with_optional({"name": name}, fields=fields or None, span=span)
 
 
 def type_parameter(name: str, constraint: str | None = None) -> dict:
     return _with_optional({"name": name}, constraint=constraint)
 
 
-def parameter(name: str, type_expr: dict) -> dict:
-    return {
-        "name": name,
-        "type": type_expr,
-    }
+def parameter(name: str, type_expr: dict, span: dict | None = None) -> dict:
+    return _with_optional(
+        {
+            "name": name,
+            "type": type_expr,
+        },
+        span=span,
+    )
 
 
-def struct_decl(name: str, fields: list[dict], visibility: str = "private") -> dict:
-    return {
-        "kind": "StructDecl",
-        "visibility": visibility,
-        "name": name,
-        "fields": fields,
-    }
+def struct_decl(
+    name: str,
+    fields: list[dict],
+    visibility: str = "private",
+    span: dict | None = None,
+) -> dict:
+    return _with_optional(
+        {
+            "kind": "StructDecl",
+            "visibility": visibility,
+            "name": name,
+            "fields": fields,
+        },
+        span=span,
+    )
 
 
-def enum_decl(name: str, variants: list[dict], visibility: str = "private") -> dict:
-    return {
-        "kind": "EnumDecl",
-        "visibility": visibility,
-        "name": name,
-        "variants": variants,
-    }
+def enum_decl(
+    name: str,
+    variants: list[dict],
+    visibility: str = "private",
+    span: dict | None = None,
+) -> dict:
+    return _with_optional(
+        {
+            "kind": "EnumDecl",
+            "visibility": visibility,
+            "name": name,
+            "variants": variants,
+        },
+        span=span,
+    )
 
 
-def newtype_decl(name: str, target: dict, visibility: str = "private") -> dict:
-    return {
-        "kind": "NewtypeDecl",
-        "visibility": visibility,
-        "name": name,
-        "target": target,
-    }
+def newtype_decl(
+    name: str,
+    target: dict,
+    visibility: str = "private",
+    span: dict | None = None,
+) -> dict:
+    return _with_optional(
+        {
+            "kind": "NewtypeDecl",
+            "visibility": visibility,
+            "name": name,
+            "target": target,
+        },
+        span=span,
+    )
 
 
 def function_decl(
@@ -129,6 +183,7 @@ def function_decl(
     body: dict,
     visibility: str = "private",
     type_parameters: list[dict] | None = None,
+    span: dict | None = None,
 ) -> dict:
     return _with_optional(
         {
@@ -142,6 +197,7 @@ def function_decl(
             "body": body,
         },
         typeParameters=type_parameters or None,
+        span=span,
     )
 
 
@@ -164,6 +220,7 @@ def trait_decl(
     members: list[dict],
     visibility: str = "private",
     type_parameters: list[dict] | None = None,
+    span: dict | None = None,
 ) -> dict:
     return _with_optional(
         {
@@ -173,24 +230,31 @@ def trait_decl(
             "members": members,
         },
         typeParameters=type_parameters or None,
+        span=span,
     )
 
 
-def impl_decl(trait: str, for_type: str, members: list[dict]) -> dict:
-    return {
-        "kind": "ImplDecl",
-        "trait": trait,
-        "forType": for_type,
-        "members": members,
-    }
+def impl_decl(trait: str, for_type: str, members: list[dict], span: dict | None = None) -> dict:
+    return _with_optional(
+        {
+            "kind": "ImplDecl",
+            "trait": trait,
+            "forType": for_type,
+            "members": members,
+        },
+        span=span,
+    )
 
 
-def test_decl(name: str, body: dict) -> dict:
-    return {
-        "kind": "TestDecl",
-        "name": name,
-        "body": body,
-    }
+def test_decl(name: str, body: dict, span: dict | None = None) -> dict:
+    return _with_optional(
+        {
+            "kind": "TestDecl",
+            "name": name,
+            "body": body,
+        },
+        span=span,
+    )
 
 
 def block(statements: list[dict]) -> dict:

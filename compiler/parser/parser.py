@@ -7,56 +7,8 @@ import re
 from compiler import ast
 
 from .lexer import Lexer, LexerError, Token
+from .types import ParseResult, ParserError, Position, Span
 
-
-@dataclass(frozen=True)
-class Position:
-    line: int
-    column: int
-
-
-@dataclass(frozen=True)
-class ParserError(ValueError):
-    code: str
-    message: str
-    help: str | None
-    file_path: str
-    start: Position
-    end: Position
-
-    @property
-    def normalized_file_path(self) -> str:
-        return self.file_path.replace("\\", "/")
-
-    def __str__(self) -> str:
-        return (
-            f"{self.normalized_file_path}:{self.start.line}:{self.start.column}-"
-            f"{self.end.line}:{self.end.column}: {self.message}"
-        )
-
-    def to_diagnostic_payload(self) -> dict:
-        diagnostic = {
-            "level": "error",
-            "code": self.code,
-            "message": self.message,
-            "location": {
-                "file": self.normalized_file_path,
-                "start": {
-                    "line": self.start.line,
-                    "column": self.start.column,
-                },
-                "end": {
-                    "line": self.end.line,
-                    "column": self.end.column,
-                },
-            },
-        }
-        if self.help:
-            diagnostic["help"] = self.help
-        return {
-            "schema_version": "0.1.0",
-            "diagnostics": [diagnostic],
-        }
 
 @dataclass
 class Parser:
@@ -67,10 +19,19 @@ class Parser:
         try:
             self.tokens = Lexer(self.source).tokenize()
         except LexerError as error:
-            message = str(error)
-            raise self.generic_error(message, Position(1, 1), Position(1, 1)) from error
+            raise ParserError(
+                error.code,
+                error.message,
+                error.help,
+                self.file_path,
+                error.span,
+            ) from error
         self.index = 0
         self.function_contexts: list[dict[str, object]] = []
+
+    @property
+    def normalized_file_path(self) -> str:
+        return self.file_path.replace("\\", "/")
 
     @property
     def current(self) -> Token:
@@ -123,7 +84,7 @@ class Parser:
         start: Position,
         end: Position,
     ) -> ParserError:
-        return ParserError(code, message, help_text, self.file_path, start, end)
+        return ParserError(code, message, help_text, self.file_path, Span(start, end))
 
     def generic_error(
         self,
@@ -145,6 +106,38 @@ class Parser:
             message,
             self.token_start_position(target),
             self.token_end_position(end_token or target),
+        )
+
+    def current_index(self) -> int:
+        if self.index >= len(self.tokens):
+            return len(self.tokens) - 1
+        return self.index
+
+    def consumed_end_index(self, start_index: int) -> int:
+        return max(self.index - 1, start_index)
+
+    def schema_position(self, position: Position) -> dict:
+        return ast.position(position.line, position.column)
+
+    def schema_span(self, start: Position, end: Position) -> dict:
+        return ast.span(
+            self.normalized_file_path,
+            self.schema_position(start),
+            self.schema_position(end),
+        )
+
+    def span_from_token_indexes(
+        self,
+        start_index: int,
+        end_index: int | None = None,
+    ) -> dict:
+        start_token = self.tokens[start_index]
+        end_token = self.tokens[
+            self.consumed_end_index(start_index) if end_index is None else end_index
+        ]
+        return self.schema_span(
+            self.token_start_position(start_token),
+            self.token_end_position(end_token),
         )
 
     def consume_separators(self) -> None:
@@ -178,10 +171,13 @@ class Parser:
         return ast.program(module, uses, declarations)
 
     def parse_module_decl(self) -> dict:
+        start_index = self.current_index()
         self.expect("MODULE", "Expected 'module'")
-        return ast.module_decl(self.parse_qualified_name())
+        path = self.parse_qualified_name()
+        return ast.module_decl(path, span=self.span_from_token_indexes(start_index))
 
     def parse_use_decl(self) -> dict:
+        start_index = self.current_index()
         self.expect("USE", "Expected 'use'")
         path_parts = [self.expect("IDENTIFIER", "Expected import path segment").value]
         while self.current.kind == "DOT" and self.peek().kind == "IDENTIFIER":
@@ -193,7 +189,11 @@ class Parser:
             self.advance()
             imports = self.parse_identifier_list("RBRACE", "Expected imported name")
             self.expect("RBRACE", "Expected '}' after import list")
-        return ast.use_decl(".".join(path_parts), imports)
+        return ast.use_decl(
+            ".".join(path_parts),
+            imports,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_declaration(self) -> dict:
         visibility = self.parse_visibility()
@@ -240,6 +240,7 @@ class Parser:
         return "private"
 
     def parse_struct_decl(self, visibility: str) -> dict:
+        start_index = self.current_index()
         self.expect("STRUCT", "Expected 'struct'")
         name = self.expect("IDENTIFIER", "Expected struct name").value
         self.expect("LBRACE", "Expected '{' after struct name")
@@ -251,15 +252,27 @@ class Parser:
             self.match("COMMA")
             self.consume_separators()
         self.expect("RBRACE", "Expected '}' after struct fields")
-        return ast.struct_decl(name, fields, visibility)
+        return ast.struct_decl(
+            name,
+            fields,
+            visibility,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_field_decl(self) -> dict:
+        start_index = self.current_index()
         visibility = self.parse_visibility()
         name = self.expect("IDENTIFIER", "Expected field name").value
         self.expect("COLON", "Expected ':' after field name")
-        return ast.field_decl(name, self.parse_type_expr(), visibility)
+        return ast.field_decl(
+            name,
+            self.parse_type_expr(),
+            visibility,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_enum_decl(self, visibility: str) -> dict:
+        start_index = self.current_index()
         self.expect("ENUM", "Expected 'enum'")
         name = self.expect("IDENTIFIER", "Expected enum name").value
         self.expect("LBRACE", "Expected '{' after enum name")
@@ -271,16 +284,28 @@ class Parser:
             self.match("COMMA")
             self.consume_separators()
         self.expect("RBRACE", "Expected '}' after enum variants")
-        return ast.enum_decl(name, variants, visibility)
+        return ast.enum_decl(
+            name,
+            variants,
+            visibility,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_newtype_decl(self, visibility: str) -> dict:
+        start_index = self.current_index()
         self.expect("NEWTYPE", "Expected 'newtype'")
         name = self.expect("IDENTIFIER", "Expected newtype name").value
         self.expect("EQUALS", "Expected '=' after newtype name")
         target = self.parse_type_expr()
-        return ast.newtype_decl(name, target, visibility)
+        return ast.newtype_decl(
+            name,
+            target,
+            visibility,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_variant_decl(self) -> dict:
+        start_index = self.current_index()
         name = self.expect("IDENTIFIER", "Expected enum variant name").value
         fields: list[dict] = []
         if self.match("LPAREN"):
@@ -292,9 +317,14 @@ class Parser:
                     break
                 self.consume_separators()
             self.expect("RPAREN", "Expected ')' after enum variant fields")
-        return ast.variant_decl(name, fields or None)
+        return ast.variant_decl(
+            name,
+            fields or None,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_function_decl(self, visibility: str, async_flag: bool) -> dict:
+        start_index = self.current_index()
         self.expect("FN", "Expected 'fn'")
         name = self.expect("IDENTIFIER", "Expected function name").value
         type_parameters = self.parse_type_parameters()
@@ -322,9 +352,11 @@ class Parser:
             body=body,
             visibility=visibility,
             type_parameters=type_parameters or None,
+            span=self.span_from_token_indexes(start_index),
         )
 
     def parse_trait_decl(self, visibility: str) -> dict:
+        start_index = self.current_index()
         self.expect("TRAIT", "Expected 'trait'")
         name = self.expect("IDENTIFIER", "Expected trait name").value
         type_parameters = self.parse_type_parameters()
@@ -335,7 +367,13 @@ class Parser:
             members.append(self.parse_trait_member())
             self.consume_separators()
         self.expect("RBRACE", "Expected '}' after trait body")
-        return ast.trait_decl(name, members, visibility, type_parameters or None)
+        return ast.trait_decl(
+            name,
+            members,
+            visibility,
+            type_parameters or None,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_trait_member(self) -> dict:
         self.expect("FN", "Expected 'fn' in trait body")
@@ -354,6 +392,7 @@ class Parser:
         return ast.trait_member(name, parameters, return_type, effects)
 
     def parse_impl_decl(self) -> dict:
+        start_index = self.current_index()
         self.expect("IMPL", "Expected 'impl'")
         trait_name = self.parse_name_like()
         self.expect("FOR", "Expected 'for' in impl declaration")
@@ -369,13 +408,19 @@ class Parser:
             members.append(self.parse_function_decl(member_visibility, async_flag))
             self.consume_separators()
         self.expect("RBRACE", "Expected '}' after impl body")
-        return ast.impl_decl(trait_name, for_type, members)
+        return ast.impl_decl(
+            trait_name,
+            for_type,
+            members,
+            span=self.span_from_token_indexes(start_index),
+        )
 
     def parse_test_decl(self) -> dict:
+        start_index = self.current_index()
         self.expect("TEST", "Expected 'test'")
         name = self.expect("STRING", "Expected test name string").value
         body = self.parse_block()
-        return ast.test_decl(name, body)
+        return ast.test_decl(name, body, span=self.span_from_token_indexes(start_index))
 
     def parse_type_parameters(self) -> list[dict]:
         if not self.match("LT"):
@@ -399,9 +444,16 @@ class Parser:
         parameters: list[dict] = []
         self.consume_separators()
         while self.current.kind != "RPAREN":
+            start_index = self.current_index()
             name = self.expect("IDENTIFIER", "Expected parameter name").value
             self.expect("COLON", "Expected ':' after parameter name")
-            parameters.append(ast.parameter(name, self.parse_type_expr()))
+            parameters.append(
+                ast.parameter(
+                    name,
+                    self.parse_type_expr(),
+                    span=self.span_from_token_indexes(start_index),
+                )
+            )
             self.consume_separators()
             if not self.match("COMMA"):
                 break
@@ -810,10 +862,31 @@ class Parser:
         )
 
 
+def parse_source_result(source: str, file_path: str = "<memory>") -> ParseResult:
+    try:
+        program = Parser(source=source, file_path=file_path).parse_program()
+    except ParserError as error:
+        return ParseResult(file_path=file_path, error=error)
+    return ParseResult(file_path=file_path, program=program)
+
+
 def parse_source(source: str, file_path: str = "<memory>") -> dict:
-    return Parser(source=source, file_path=file_path).parse_program()
+    result = parse_source_result(source, file_path=file_path)
+    if result.error is not None:
+        raise result.error
+    assert result.program is not None
+    return result.program
+
+
+def parse_file_result(path: str | Path) -> ParseResult:
+    file_path = Path(path)
+    source = file_path.read_text(encoding="utf-8")
+    return parse_source_result(source, str(file_path))
 
 
 def parse_file(path: str | Path) -> dict:
-    file_path = Path(path)
-    return parse_source(file_path.read_text(encoding="utf-8"), str(file_path))
+    result = parse_file_result(path)
+    if result.error is not None:
+        raise result.error
+    assert result.program is not None
+    return result.program

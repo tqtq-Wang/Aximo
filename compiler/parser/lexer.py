@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .types import Position, Span
+
 
 KEYWORDS = {
     "async",
@@ -59,8 +61,18 @@ class Token:
     end: int
 
 
+@dataclass(frozen=True)
 class LexerError(ValueError):
-    pass
+    code: str
+    message: str
+    help: str | None
+    span: Span
+
+    def __str__(self) -> str:
+        return (
+            f"{self.span.start.line}:{self.span.start.column}-"
+            f"{self.span.end.line}:{self.span.end.column}: {self.message}"
+        )
 
 
 class Lexer:
@@ -116,7 +128,11 @@ class Lexer:
                 tokens.append(self._make_token(token_kind, char, self.index, self.index + 1))
                 self._advance()
                 continue
-            raise LexerError(f"Unexpected character {char!r} at {self.line}:{self.column}")
+            raise self._error(
+                "L001",
+                f"unexpected character {char!r}",
+                "remove the unsupported character or replace it with syntax from the current spec",
+            )
         tokens.append(Token("EOF", "", self.line, self.column, self.length, self.length))
         return tokens
 
@@ -165,7 +181,15 @@ class Lexer:
                 continue
             value_chars.append(char)
             self._advance()
-        raise LexerError(f"Unterminated string literal at {line}:{column}")
+        raise LexerError(
+            code="L002",
+            message="unterminated string literal",
+            help="close the string with a matching double quote",
+            span=Span(
+                start=Position(line, column),
+                end=Position(self.line, self.column),
+            ),
+        )
 
     def _peek(self, offset: int) -> str:
         target = self.index + offset
@@ -175,6 +199,15 @@ class Lexer:
 
     def _make_token(self, kind: str, value: str, start: int, end: int) -> Token:
         return Token(kind, value, self.line, self.column, start, end)
+
+    def _error(self, code: str, message: str, help_text: str | None) -> LexerError:
+        position = Position(self.line, self.column)
+        return LexerError(
+            code=code,
+            message=message,
+            help=help_text,
+            span=Span(start=position, end=position),
+        )
 
     def _advance(self, amount: int = 1) -> None:
         for _ in range(amount):
