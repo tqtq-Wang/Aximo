@@ -10,8 +10,10 @@ if __package__ in (None, ""):
     CURRENT_DIR = Path(__file__).resolve().parent
     if str(CURRENT_DIR) not in sys.path:
         sys.path.insert(0, str(CURRENT_DIR))
+    from builder import summary_from_source_file
     from contract import module_summary_from_mapping, new_module_summary, write_summary
 else:
+    from .builder import summary_from_source_file
     from .contract import module_summary_from_mapping, new_module_summary, write_summary
 
 
@@ -33,6 +35,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input",
         help="Optional JSON file containing a partial or complete summary payload.",
+    )
+    parser.add_argument(
+        "--source",
+        help="Optional .ax source file parsed through the public compiler.parser API.",
     )
     parser.add_argument(
         "--out",
@@ -59,7 +65,14 @@ def _load_summary_payload(path: str) -> dict[str, Any]:
 def main() -> int:
     args = parse_args()
 
-    if args.input:
+    if args.source and args.input:
+        raise ValueError("--source and --input are mutually exclusive")
+    if args.source and args.module:
+        raise ValueError("--module cannot be used with --source")
+
+    if args.source:
+        summary = summary_from_source_file(args.source)
+    elif args.input:
         payload = _load_summary_payload(args.input)
         if args.module:
             payload["module"] = args.module
