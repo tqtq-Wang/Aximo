@@ -11,7 +11,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Emit textual LLVM IR from built-in Aximo feasibility demos. "
-            "This spike does not define the formal frontend -> IR -> LLVM contract."
+            "This compatibility spike does not define the formal compiler.ir -> backend contract."
         )
     )
     parser.add_argument(

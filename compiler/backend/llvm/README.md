@@ -10,10 +10,11 @@ Non-goals:
 - this does not integrate with `compiler/ast/*`
 - this does not integrate with `compiler/summary/*`
 - this does not attempt optimization passes or backend architecture decisions
+- this is not the canonical `compiler/backend` entrypoint for future backend integration
 
 What it does:
 
-- exposes a small CLI at `python -m compiler.backend.llvm`
+- exposes a compatibility CLI at `python -m compiler.backend.llvm`
 - writes textual LLVM IR `.ll` files
 - ships two built-in demos:
   - `add`: minimal integer addition function
@@ -22,12 +23,19 @@ What it does:
 Example usage:
 
 ```powershell
+python -m compiler.backend --list-targets
+python -m compiler.backend --target llvm-spike --demo add --out .tmp/add.ll
+python -m compiler.backend --target llvm-spike --demo hello --emit-ir --out .tmp/hello.ll
+
+# compatibility entrypoint kept for the isolated spike
 python -m compiler.backend.llvm --demo add --emit-ir --out .tmp/add.ll
 python -m compiler.backend.llvm --demo hello --emit-ir --out .tmp/hello.ll
 ```
 
 Notes:
 
+- use `python -m compiler.backend` to inspect the formal backend boundary and target status
 - `--emit-ir` is accepted for spike ergonomics, but the current CLI only emits textual LLVM IR
 - if LLVM tools are present locally, validate at least one generated file with the available toolchain
 - if no LLVM tools are installed, the spike is still useful as a `.ll` text emitter
+- no parser, AST, or future IR contract should be inferred from these demos
