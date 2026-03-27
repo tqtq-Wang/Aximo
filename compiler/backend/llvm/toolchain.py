@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
+
+if sys.platform == "win32":
+    import winreg
 
 LLVM_TOOL_NAMES: tuple[str, ...] = ("clang", "llc", "opt", "llvm-as", "lli")
 
@@ -50,7 +55,7 @@ class ToolchainReport:
 
 
 def probe_tool(name: str) -> ToolStatus:
-    resolved = shutil.which(name)
+    resolved = shutil.which(name, path=_candidate_search_path())
     if resolved is None:
         return ToolStatus(name=name, path=None, version=None)
     version, error = _read_version(Path(resolved))
@@ -110,3 +115,47 @@ def _read_version(path: Path) -> tuple[str | None, str | None]:
             return version_line, message
         return None, message
     return version_line, None
+
+
+def _candidate_search_path() -> str | None:
+    segments: list[str] = []
+    seen: set[str] = set()
+
+    for path_value in (os.environ.get("PATH"), _read_windows_path("user"), _read_windows_path("machine")):
+        if not path_value:
+            continue
+        for raw_segment in path_value.split(os.pathsep):
+            segment = raw_segment.strip()
+            if not segment:
+                continue
+            normalized = os.path.normcase(os.path.normpath(os.path.expandvars(segment)))
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            segments.append(os.path.expandvars(segment))
+
+    if not segments:
+        return None
+    return os.pathsep.join(segments)
+
+
+def _read_windows_path(scope: str) -> str | None:
+    if sys.platform != "win32":
+        return None
+
+    hive = winreg.HKEY_CURRENT_USER if scope == "user" else winreg.HKEY_LOCAL_MACHINE
+    sub_key = (
+        r"Environment"
+        if scope == "user"
+        else r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
+    )
+    try:
+        with winreg.OpenKey(hive, sub_key) as key:
+            value, _ = winreg.QueryValueEx(key, "Path")
+    except FileNotFoundError:
+        return None
+    except OSError:
+        return None
+    if not isinstance(value, str):
+        return None
+    return value
