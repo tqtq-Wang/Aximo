@@ -57,6 +57,8 @@ Current IR subset notes:
   - function declarations
   - direct calls with representable argument and result types
   - integer and bool literals
+  - string literals lowered as module-level global constants
+  - `String + String` lowered to the explicit runtime symbol `@ax_runtime_string_concat`
   - local bindings and block terminators supported by the current LLVM core
 - accepted but currently non-executable for LLVM output:
   - `StructType`
@@ -71,3 +73,29 @@ Current IR subset notes:
   - mutable locals
   - unexpanded `ErrorPropagationPlaceholder`
   - unsupported IR values such as field reads or symbol values in executable positions
+
+Current runtime expectation:
+
+- textual LLVM output may declare `@ax_runtime_string_concat(ptr, ptr) -> ptr`
+- the repository now provides a minimal stub at `runtime/minimal/string_runtime.c`
+- this stub is only a linking aid for the current backend slice, not the final runtime ABI
+
+Minimal link example:
+
+```powershell
+python -m compiler.backend --target ir-backend --input examples/hello-world/src/app.ax --emit-llvm --out .tmp/hello.ll
+
+@'
+#include <stdio.h>
+
+extern char* app__build_greeting(const char* subject);
+
+int main(void) {
+    puts(app__build_greeting("World"));
+    return 0;
+}
+'@ | Set-Content -LiteralPath .tmp/hello_main.c -Encoding utf8
+
+clang .tmp/hello.ll runtime/minimal/string_runtime.c .tmp/hello_main.c -o .tmp/hello.exe
+.tmp/hello.exe
+```
