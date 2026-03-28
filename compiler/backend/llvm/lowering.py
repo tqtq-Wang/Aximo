@@ -37,6 +37,7 @@ from .model import (
     LLVMDeclaration,
     LLVMFunction,
     LLVMFunctionSignature,
+    LLVMGlobalString,
     LLVMJumpTerminator,
     LLVMModule,
     LLVMParameter,
@@ -89,6 +90,7 @@ class _ModuleContext:
     module: IRModule
     defined_functions: dict[str, _KnownFunction]
     external_functions: dict[str, LLVMFunctionSignature] = field(default_factory=dict)
+    global_strings: dict[str, LLVMGlobalString] = field(default_factory=dict)
 
     def register_external(
         self,
@@ -107,6 +109,19 @@ class _ModuleContext:
                 symbol=symbol_name,
             )
         self.external_functions[symbol_name] = signature
+
+    def register_global_string(self, value: str) -> LLVMGlobalString:
+        existing = self.global_strings.get(value)
+        if existing is not None:
+            return existing
+
+        global_string = LLVMGlobalString(
+            name=f"str_{len(self.global_strings) + 1}",
+            value=value,
+            byte_length=len(value.encode("utf-8")) + 1,
+        )
+        self.global_strings[value] = global_string
+        return global_string
 
 
 @dataclass(slots=True)
@@ -167,6 +182,7 @@ def lower_module(module: IRModule) -> LLVMModule:
     return LLVMModule(
         name=module.name,
         source_filename=module.source_file or module.name,
+        globals=tuple(context.global_strings.values()),
         declarations=declarations,
         functions=tuple(functions),
     )
@@ -447,7 +463,7 @@ def _resolve_value(
     if isinstance(value, IRLocalRef):
         return _resolve_local_ref(value, context)
     if isinstance(value, IRLiteral):
-        return _lower_literal(value, expected_type=expected_type)
+        return _lower_literal(value, context=context, expected_type=expected_type)
     if isinstance(value, IRDirectCall):
         call_instruction = _build_call_instruction(
             value,
@@ -527,7 +543,7 @@ def _resolve_local_binding(
     elif isinstance(bind.value, IRParameterRef):
         lowered = _resolve_parameter_ref(bind.value, context)
     elif isinstance(bind.value, IRLiteral):
-        lowered = _lower_literal(bind.value, expected_type=binding_type)
+        lowered = _lower_literal(bind.value, context=context, expected_type=binding_type)
     else:
         raise _unsupported_value_error(bind.value)
 
@@ -911,6 +927,7 @@ def _lower_non_void_type(type_ref: IRTypeRef, *, context: str) -> LLVMType:
 def _lower_literal(
     literal: IRLiteral,
     *,
+    context: _FunctionContext,
     expected_type: LLVMType | None,
 ) -> LLVMValue:
     lowered_type = _lower_literal_type(literal.type)
@@ -942,6 +959,14 @@ def _lower_literal(
                 code="LLVM036",
             )
         return LLVMValue(type=lowered_type, text=str(literal.value))
+    if literal.type.name == "String":
+        if not isinstance(literal.value, str):
+            raise _backend_error(
+                "string literal must carry a Python str value",
+                code="LLVM042",
+            )
+        global_string = context.module.register_global_string(literal.value)
+        return LLVMValue(type=LLVM_PTR, text=f"@{global_string.name}")
     raise _backend_error(
         "literal kind is not supported by current LLVM lowering core",
         code="LLVM037",
@@ -950,7 +975,7 @@ def _lower_literal(
 
 
 def _lower_literal_type(type_ref: IRTypeRef) -> LLVMType:
-    if type_ref.name in {"Bool", "Unit"} or type_ref.name in _INTEGER_TYPES:
+    if type_ref.name in {"Bool", "Unit", "String"} or type_ref.name in _INTEGER_TYPES:
         return _lower_type(type_ref, context=f"literal {type_ref.name}")
     raise _backend_error(
         "literal kind is not supported by current LLVM lowering core",

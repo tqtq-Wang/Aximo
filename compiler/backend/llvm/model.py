@@ -42,6 +42,13 @@ class LLVMDeclaration:
 
 
 @dataclass(slots=True, frozen=True)
+class LLVMGlobalString:
+    name: str
+    value: str
+    byte_length: int
+
+
+@dataclass(slots=True, frozen=True)
 class LLVMCallInstruction:
     callee: str
     return_type: LLVMType
@@ -92,6 +99,7 @@ class LLVMFunction:
 class LLVMModule:
     name: str
     source_filename: str
+    globals: tuple[LLVMGlobalString, ...] = ()
     declarations: tuple[LLVMDeclaration, ...] = ()
     functions: tuple[LLVMFunction, ...] = ()
 
@@ -103,6 +111,7 @@ __all__ = [
     "LLVMDeclaration",
     "LLVMFunction",
     "LLVMFunctionSignature",
+    "LLVMGlobalString",
     "LLVMInstruction",
     "LLVMJumpTerminator",
     "LLVMModule",

@@ -6,6 +6,7 @@ from .model import (
     LLVMCallInstruction,
     LLVMDeclaration,
     LLVMFunction,
+    LLVMGlobalString,
     LLVMJumpTerminator,
     LLVMModule,
     LLVMReturnTerminator,
@@ -26,6 +27,11 @@ def render_module(module: LLVMModule) -> str:
         for declaration in module.declarations:
             lines.append(render_declaration(declaration))
 
+    if module.globals:
+        lines.append("")
+        for global_string in module.globals:
+            lines.append(render_global_string(global_string))
+
     if module.functions:
         lines.append("")
         for index, function in enumerate(module.functions):
@@ -44,6 +50,13 @@ def render_declaration(declaration: LLVMDeclaration) -> str:
     return (
         f"declare {render_type(declaration.signature.return_type)} "
         f"@{declaration.name}({parameters})"
+    )
+
+
+def render_global_string(global_string: LLVMGlobalString) -> str:
+    return (
+        f"@{global_string.name} = private unnamed_addr constant "
+        f"[{global_string.byte_length} x i8] c\"{_escape_bytes(global_string.value)}\""
     )
 
 
@@ -110,10 +123,21 @@ def _escape_string(value: str) -> str:
     return value.replace("\\", "\\\\").replace('"', '\\"')
 
 
+def _escape_bytes(value: str) -> str:
+    parts: list[str] = []
+    for byte in value.encode("utf-8") + b"\x00":
+        if 32 <= byte <= 126 and byte not in {34, 92}:
+            parts.append(chr(byte))
+            continue
+        parts.append(f"\\{byte:02X}")
+    return "".join(parts)
+
+
 __all__ = [
     "render_block",
     "render_declaration",
     "render_function",
+    "render_global_string",
     "render_instruction",
     "render_module",
     "render_terminator",
