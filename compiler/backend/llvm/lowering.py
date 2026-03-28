@@ -59,6 +59,7 @@ _DECLARATION_LINKAGE = {
     "internal": "internal",
     "private": "private",
 }
+_RUNTIME_STRING_CONCAT_SYMBOL = "ax_runtime_string_concat"
 _INTEGER_TYPES = {
     "I8": LLVM_I8,
     "I16": LLVM_I16,
@@ -754,6 +755,28 @@ def _resolve_call_target(
     *,
     expected_result_type: LLVMType | None,
 ) -> tuple[str, LLVMFunctionSignature]:
+    builtin = _resolve_builtin_call(
+        call,
+        arguments=arguments,
+        expected_result_type=expected_result_type,
+        function_name=context.function.name,
+    )
+    if builtin is not None:
+        symbol_name, signature = builtin
+        context.module.register_external(
+            symbol_name=symbol_name,
+            signature=signature,
+            callee=call.callee,
+        )
+        _validate_call_signature(
+            call,
+            signature=signature,
+            arguments=arguments,
+            expected_result_type=expected_result_type,
+            function_name=context.function.name,
+        )
+        return symbol_name, signature
+
     known = _lookup_known_function(call.callee, context.module)
     if known is not None:
         _validate_call_signature(
@@ -798,6 +821,62 @@ def _resolve_call_target(
         function_name=context.function.name,
     )
     return symbol_name, signature
+
+
+def _resolve_builtin_call(
+    call: IRDirectCall,
+    *,
+    arguments: tuple[LLVMValue, ...],
+    expected_result_type: LLVMType | None,
+    function_name: str,
+) -> tuple[str, LLVMFunctionSignature] | None:
+    if call.callee.module is not None:
+        return None
+
+    if call.callee.name == "+":
+        if len(arguments) != 2:
+            raise _backend_error(
+                "string concat runtime lowering requires exactly two arguments",
+                code="LLVM043",
+                function=function_name,
+                callee=call.callee.name,
+                actual=len(arguments),
+            )
+        if any(argument.type != LLVM_PTR for argument in arguments):
+            raise _backend_error(
+                "current '+' lowering only supports pointer-backed string values",
+                code="LLVM044",
+                function=function_name,
+                callee=call.callee.name,
+            )
+        signature = LLVMFunctionSignature(
+            return_type=LLVM_PTR,
+            parameter_types=(LLVM_PTR, LLVM_PTR),
+        )
+        if call.result_type is not None:
+            declared_return_type = _lower_type(
+                call.result_type,
+                context=f"direct call {call.callee.name} result",
+            )
+            if declared_return_type != LLVM_PTR:
+                raise _backend_error(
+                    "string concat runtime symbol must return ptr",
+                    code="LLVM045",
+                    function=function_name,
+                    callee=call.callee.name,
+                    actual=declared_return_type.spelling,
+                )
+        return _RUNTIME_STRING_CONCAT_SYMBOL, signature
+
+    if _is_operator_symbol(call.callee.name):
+        raise _backend_error(
+            "unsupported builtin operator for current LLVM lowering core",
+            code="LLVM046",
+            function=function_name,
+            callee=call.callee.name,
+        )
+
+    return None
 
 
 def _validate_call_signature(
@@ -1042,6 +1121,10 @@ def _sanitize_identifier(value: str) -> str:
     if sanitized[0].isdigit():
         sanitized = f"v_{sanitized}"
     return sanitized
+
+
+def _is_operator_symbol(value: str) -> bool:
+    return bool(value) and all(not character.isalnum() and character != "_" for character in value)
 
 
 def _backend_error(message: str, *, code: str, **details: Any) -> BackendError:
